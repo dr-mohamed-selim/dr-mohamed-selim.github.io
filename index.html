@@ -78,6 +78,12 @@ td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
   #rx{border:0;border-radius:0;max-width:100%;padding:0}
   @page{margin:14mm}
 }
+.pw-wrap{position:relative}
+.pw-wrap input{padding-inline-end:42px}
+.pw-eye{position:absolute;inset-inline-end:5px;top:50%;transform:translateY(-50%);min-height:32px;width:36px;padding:0;border:0;background:transparent;color:var(--ink3);border-radius:8px;cursor:pointer}
+.pw-eye:hover{color:var(--ink)}
+.pw-eye .pw-slash{display:none}
+.pw-eye.showing .pw-slash{display:inline}
 </style>
 </head>
 <body>
@@ -101,10 +107,10 @@ td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
       <div class="muted">أنشئ الباسورد الرئيسي للدكتور. الباسورد ده بيفتح النظام على الجهاز ده بس، ومبيتبعتش لأي حد — بيتسجل هنا بشكل مشفر.</div>
       <div style="height:14px"></div>
       <label>الباسورد الرئيسي</label>
-      <input type="password" id="suPass" maxlength="60" autocomplete="new-password">
+      <div class="pw-wrap"><input type="password" id="suPass" maxlength="60" autocomplete="new-password"><button type="button" class="pw-eye" aria-label="إظهار الباسورد" data-pw="suPass"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line class="pw-slash" x1="4" y1="20" x2="20" y2="4"/></svg></button></div>
       <div style="height:10px"></div>
       <label>تأكيد الباسورد</label>
-      <input type="password" id="suPass2" maxlength="60" autocomplete="new-password">
+      <div class="pw-wrap"><input type="password" id="suPass2" maxlength="60" autocomplete="new-password"><button type="button" class="pw-eye" aria-label="إظهار الباسورد" data-pw="suPass2"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line class="pw-slash" x1="4" y1="20" x2="20" y2="4"/></svg></button></div>
       <div class="err" id="suErr"></div>
       <button class="primary" id="suGo" style="width:100%">بدء الاستخدام</button>
     </div>
@@ -113,7 +119,7 @@ td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
       <div class="muted">اختار الحساب واكتب الباسورد.</div>
       <div id="acctList" style="margin:14px 0"></div>
       <label>الباسورد</label>
-      <input type="password" id="liPass" maxlength="60" autocomplete="current-password">
+      <div class="pw-wrap"><input type="password" id="liPass" maxlength="60" autocomplete="current-password"><button type="button" class="pw-eye" aria-label="إظهار الباسورد" data-pw="liPass"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line class="pw-slash" x1="4" y1="20" x2="20" y2="4"/></svg></button></div>
       <div class="err" id="liErr"></div>
       <button class="primary" id="liGo" style="width:100%">دخول</button>
       <div style="text-align:center;margin-top:12px"><button class="linkish" id="liForgot">نسيت الباسورد؟</button></div>
@@ -140,7 +146,7 @@ td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
     <h3 style="margin:18px 0 10px;font-size:1rem">إضافة حساب جديد</h3>
     <div class="grid2">
       <div><label>الاسم</label><input type="text" id="naName" maxlength="60"></div>
-      <div><label>الباسورد</label><input type="password" id="naPass" maxlength="60" autocomplete="new-password"></div>
+      <div><label>الباسورد</label><div class="pw-wrap"><input type="password" id="naPass" maxlength="60" autocomplete="new-password"><button type="button" class="pw-eye" aria-label="إظهار الباسورد" data-pw="naPass"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line class="pw-slash" x1="4" y1="20" x2="20" y2="4"/></svg></button></div></div>
     </div>
     <div class="err" id="naErr" style="color:var(--danger);margin-top:6px;min-height:20px;font-size:.92rem"></div>
     <div class="row-actions">
@@ -666,6 +672,19 @@ if(!window.crypto||!crypto.subtle){
     startAuth();
   });
 }
+
+// password visibility toggles
+document.querySelectorAll('.pw-eye').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var input=el(btn.getAttribute('data-pw'));
+    if(!input){return}
+    var show=input.type==='password';
+    input.type=show?'text':'password';
+    btn.classList.toggle('showing',show);
+    btn.setAttribute('aria-label',show?'إخفاء الباسورد':'إظهار الباسورد');
+    input.focus();
+  });
+});
 })();
 </script>
 </body>
