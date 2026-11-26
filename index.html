@@ -84,6 +84,9 @@ td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
 .pw-eye:hover{color:var(--ink)}
 .pw-eye .pw-slash{display:none}
 .pw-eye.showing .pw-slash{display:inline}
+.acctrow .pw-change{display:flex;align-items:center;gap:8px;flex:2;flex-wrap:wrap}
+.acctrow .pw-change .pw-wrap{flex:1;min-width:140px}
+.acctrow .pw-change .err{color:var(--danger);font-size:.85rem;min-height:0;margin:0}
 </style>
 </head>
 <body>
@@ -634,10 +637,27 @@ function renderAcc(){
       row.innerHTML='<span class="nm"><b>'+esc(u.name)+'</b> <span class="muted">'+(u.role==='doctor'?'دكتور':'مستخدم')+'</span></span>';
       var bp=document.createElement('button');bp.className='small';bp.textContent='باسورد جديد';
       bp.onclick=function(){
-        var np=prompt('الباسورد الجديد للحساب "'+u.name+'" (4 حروف أو أرقام على الأقل):');
-        if(np==null)return;
-        if(np.length<4){alert('الباسورد لازم يكون 4 حروف أو أرقام على الأقل.');return}
-        makeUser(u.name,u.role,np).then(function(){alert('اتغير الباسورد.') });
+        if(row.querySelector('.pw-change'))return;
+        bp.style.display='none';if(bd)bd.style.display='none';
+        var fc=document.createElement('div');fc.className='pw-change';
+        var wrap=document.createElement('div');wrap.className='pw-wrap';
+        var inp=document.createElement('input');inp.type='password';inp.maxLength=60;inp.setAttribute('autocomplete','new-password');inp.placeholder='الباسورد الجديد';
+        var eye=document.createElement('button');eye.type='button';eye.className='pw-eye';eye.setAttribute('aria-label','إظهار الباسورد');eye.innerHTML=PW_EYE_SVG;
+        eye.onclick=function(){pwEyeClick(eye,inp)};
+        wrap.appendChild(inp);wrap.appendChild(eye);
+        var sv=document.createElement('button');sv.className='small primary';sv.textContent='حفظ';
+        var cn=document.createElement('button');cn.className='small';cn.textContent='إلغاء';
+        var er=document.createElement('span');er.className='err';
+        sv.onclick=function(){
+          var np=inp.value;
+          if(np.length<4){er.textContent='الباسورد لازم يكون 4 حروف أو أرقام على الأقل.';return}
+          sv.disabled=true;
+          makeUser(u.name,u.role,np).then(function(){alert('اتغير الباسورد.');renderAcc()});
+        };
+        inp.onkeydown=function(e){if(e.key==='Enter')sv.click()};
+        cn.onclick=function(){renderAcc()};
+        fc.appendChild(wrap);fc.appendChild(sv);fc.appendChild(cn);fc.appendChild(er);
+        row.appendChild(fc);inp.focus();
       };
       row.appendChild(bp);
       if(u.role!=='doctor'){
@@ -674,16 +694,16 @@ if(!window.crypto||!crypto.subtle){
 }
 
 // password visibility toggles
+var PW_EYE_SVG='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><line class="pw-slash" x1="4" y1="20" x2="20" y2="4"/></svg>';
+function pwEyeClick(btn,input){
+  var show=input.type==='password';
+  input.type=show?'text':'password';
+  btn.classList.toggle('showing',show);
+  btn.setAttribute('aria-label',show?'إخفاء الباسورد':'إظهار الباسورد');
+  input.focus();
+}
 document.querySelectorAll('.pw-eye').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    var input=el(btn.getAttribute('data-pw'));
-    if(!input){return}
-    var show=input.type==='password';
-    input.type=show?'text':'password';
-    btn.classList.toggle('showing',show);
-    btn.setAttribute('aria-label',show?'إخفاء الباسورد':'إظهار الباسورد');
-    input.focus();
-  });
+  btn.addEventListener('click',function(){var input=el(btn.getAttribute('data-pw'));if(input)pwEyeClick(btn,input)});
 });
 })();
 </script>
