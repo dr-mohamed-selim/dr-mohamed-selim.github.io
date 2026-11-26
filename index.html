@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>عيادة د. محمد سليم خليل - نظام المرضى</title>
+<style>
+*{box-sizing:border-box}
+:root{--page:#fdfcfb;--card:#fff;--raised:#f6f2ef;--ink:#4d3533;--ink2:rgba(77,53,51,.7);--ink3:rgba(77,53,51,.5);--line:rgba(77,53,51,.12);--accent:#73a89a;--on-accent:#fff;--btn:#4d3533;--on-btn:#fdfcfb;--danger:#b3261e}
+body{margin:0;background:var(--page);color:var(--ink);font-family:'Segoe UI',Tahoma,'Noto Naskh Arabic','Noto Sans Arabic',Arial,sans-serif;line-height:1.7;font-size:16px}
+header.app{background:var(--card);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header.app h1{font-size:1.15rem;margin:0;flex:1;min-width:200px}
+header.app .tools{display:flex;gap:8px}
+button{font:inherit;display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.primary{background:var(--btn);color:var(--on-btn);border-color:var(--btn)}
+button.accent{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+button.small{min-height:32px;padding:0 10px;font-size:.88rem}
+button.danger{color:var(--danger)}
+.wrap{display:grid;grid-template-columns:320px 1fr;gap:0;min-height:calc(100vh - 65px)}
+.side{border-inline-end:1px solid var(--line);background:var(--card);display:flex;flex-direction:column}
+.side .searchbox{padding:12px;border-bottom:1px solid var(--line)}
+.side input[type=text],.side input[type=number]{width:100%}
+.plist{overflow-y:auto;flex:1}
+.pitem{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.pitem:hover{background:var(--raised)}
+.pitem.active{background:var(--raised);border-inline-start:3px solid var(--accent)}
+.pitem b{display:block}
+.pitem .meta{color:var(--ink3);font-size:.85rem}
+.main{padding:20px;overflow-y:auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{font-size:1.05rem;margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.wrap{grid-template-columns:1fr}.side{border-inline-end:0;border-bottom:1px solid var(--line)}.grid2{grid-template-columns:1fr}}
+label{display:block;color:var(--ink3);font-size:.85rem;margin-bottom:4px}
+input[type=text],input[type=number],input[type=date],input[type=password],textarea{width:100%;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;padding:6px 12px}
+textarea{min-height:80px;resize:vertical}
+table{width:100%;border-collapse:collapse}
+th{color:var(--ink3);font-size:.85rem;font-weight:400;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.muted{color:var(--ink3)}
+.empty{padding:40px;text-align:center;color:var(--ink3)}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.flist{display:flex;flex-direction:column;gap:8px}
+.fitem{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--raised)}
+.fitem .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hidden{display:none!important}
+.warn{background:#fff7e6;border:1px solid #f0c36d;color:#7a5a12;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:.92rem}
+.badge{display:inline-block;background:var(--raised);border-radius:8px;padding:2px 10px;font-size:.85rem;color:var(--ink2)}
+#rx{background:#fff;color:#222;border:1px solid var(--line);border-radius:14px;padding:28px;max-width:720px;margin:0 auto}
+#rx .rx-head{display:flex;justify-content:space-between;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:14px}
+#rx .rx-head .dr b{display:block;font-size:1.2rem}
+#rx .rx-head .dr span{color:#555;font-size:.9rem;display:block}
+#rx .rx-head .clinic{text-align:left;color:#555;font-size:.85rem}
+#rx .rx-pat{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:14px;font-size:1rem}
+#rx .rx-pat span b{color:#777;font-weight:400;margin-inline-end:4px;font-size:.85rem}
+#rx table th{color:#777;border-bottom:1.5px solid #999}
+#rx table td{border-bottom:1px solid #ddd}
+#rx .rx-notes{margin-top:12px;white-space:pre-wrap}
+#rx .rx-foot{margin-top:26px;display:flex;justify-content:space-between;color:#555;font-size:.85rem}
+#rx .rx-sign{margin-top:36px;text-align:left;color:#555}
+/* auth */
+#auth{position:fixed;inset:0;background:var(--page);display:flex;align-items:flex-start;justify-content:center;padding:60px 16px;z-index:50;overflow-y:auto}
+#auth .acard,#accOverlay .acard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;max-width:440px;width:100%}
+#auth h2,#accOverlay h2{margin:0 0 8px;font-size:1.2rem}
+.acctbtn{display:block;width:100%;text-align:right;margin-bottom:8px}
+#auth .err{color:var(--danger);margin-top:8px;min-height:22px;font-size:.92rem}
+.linkish{border:0;background:none;text-decoration:underline;color:var(--ink2);min-height:auto;padding:4px}
+#accOverlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:60;overflow-y:auto}
+.acctrow{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:8px;background:var(--raised)}
+.acctrow .nm{flex:1}
+@media print{
+  body{background:#fff}
+  #auth,#accOverlay{display:none!important}
+  header.app,.side,.main .card,.row-actions,.warn,.no-print{display:none!important}
+  .wrap{display:block}
+  .main{padding:0;overflow:visible}
+  #rx{border:0;border-radius:0;max-width:100%;padding:0}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+
+<header class="app hidden" id="appHeader">
+  <h1>عيادة د. محمد سليم خليل — نظام المرضى</h1>
+  <div class="tools">
+    <button id="btnAccounts" class="small hidden">الحسابات</button>
+    <button id="btnExport" class="small">نسخة احتياطية</button>
+    <button id="btnImport" class="small">استرجاع نسخة</button>
+    <button id="btnLock" class="small">قفل</button>
+    <input type="file" id="importFile" accept="application/json" class="hidden">
+  </div>
+</header>
+
+<!-- auth overlay -->
+<div id="auth" class="hidden">
+  <div class="acard">
+    <div id="authSetup" class="hidden">
+      <h2>إعداد أول مرة</h2>
+      <div class="muted">أنشئ الباسورد الرئيسي للدكتور. الباسورد ده بيفتح النظام على الجهاز ده بس، ومبيتبعتش لأي حد — بيتسجل هنا بشكل مشفر.</div>
+      <div style="height:14px"></div>
+      <label>الباسورد الرئيسي</label>
+      <input type="password" id="suPass" maxlength="60" autocomplete="new-password">
+      <div style="height:10px"></div>
+      <label>تأكيد الباسورد</label>
+      <input type="password" id="suPass2" maxlength="60" autocomplete="new-password">
+      <div class="err" id="suErr"></div>
+      <button class="primary" id="suGo" style="width:100%">بدء الاستخدام</button>
+    </div>
+    <div id="authLogin" class="hidden">
+      <h2>تسجيل الدخول</h2>
+      <div class="muted">اختار الحساب واكتب الباسورد.</div>
+      <div id="acctList" style="margin:14px 0"></div>
+      <label>الباسورد</label>
+      <input type="password" id="liPass" maxlength="60" autocomplete="current-password">
+      <div class="err" id="liErr"></div>
+      <button class="primary" id="liGo" style="width:100%">دخول</button>
+      <div style="text-align:center;margin-top:12px"><button class="linkish" id="liForgot">نسيت الباسورد؟</button></div>
+    </div>
+    <div id="authForgot" class="hidden">
+      <h2>نسيت الباسورد؟</h2>
+      <div class="muted" style="margin-bottom:12px">لو أي حساب تاني غير الدكتور: الدكتور يدخل بحسابه ومن زرار "الحسابات" يعمل لك باسورد جديد.</div>
+      <div class="warn">لو الباسورد الرئيسي للدكتور: مفيش طريقة لاسترجاعه. النظام شغال أوفلاين بالكامل ومفيش أي حد عنده نسخة من الباسورد، فمحدش يقدر يفتحه لك. الحل الوحيد هو مسح كل بيانات النظام على الجهاز ده (المرضى والحسابات كلها) والبدء من جديد.</div>
+      <label>لو متأكد، اكتب كلمة "مسح" هنا:</label>
+      <input type="text" id="wipeConfirm" maxlength="10">
+      <div class="err" id="wipeErr"></div>
+      <button class="danger" id="wipeGo" style="width:100%">مسح كل البيانات والبدء من جديد</button>
+      <div style="text-align:center;margin-top:12px"><button class="linkish" id="forgotBack">رجوع</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- accounts overlay (doctor only) -->
+<div id="accOverlay" class="hidden">
+  <div class="acard">
+    <h2>الحسابات</h2>
+    <div class="muted" style="margin-bottom:14px">الدكتور بس هو اللي يقدر يضيف أي شخص، أو يشيل حسابه في أي وقت، أو يغير باسورد أي حساب.</div>
+    <div id="accRows"></div>
+    <h3 style="margin:18px 0 10px;font-size:1rem">إضافة حساب جديد</h3>
+    <div class="grid2">
+      <div><label>الاسم</label><input type="text" id="naName" maxlength="60"></div>
+      <div><label>الباسورد</label><input type="password" id="naPass" maxlength="60" autocomplete="new-password"></div>
+    </div>
+    <div class="err" id="naErr" style="color:var(--danger);margin-top:6px;min-height:20px;font-size:.92rem"></div>
+    <div class="row-actions">
+      <button class="primary" id="naAdd">إضافة الحساب</button>
+      <button id="accClose">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap hidden" id="appWrap">
+  <aside class="side">
+    <div class="searchbox">
+      <input type="text" id="q" placeholder="ابحث بالكود أو الاسم أو التليفون...">
+    </div>
+    <div class="plist" id="plist"></div>
+    <div style="padding:12px;border-top:1px solid var(--line)">
+      <button class="primary" id="btnNew" style="width:100%">+ مريض جديد</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="empty" id="emptyState">اختار مريض من القايمة، أو سجّل مريض جديد.</div>
+
+    <!-- new patient form -->
+    <div class="card hidden" id="newCard">
+      <h2>تسجيل مريض جديد</h2>
+      <div class="grid2">
+        <div><label>الاسم</label><input type="text" id="npName" maxlength="120"></div>
+        <div><label>السن</label><input type="number" id="npAge" min="0" max="130"></div>
+      </div>
+      <div class="grid2" style="margin-top:12px">
+        <div><label>رقم التليفون</label><input type="text" id="npPhone" maxlength="30"></div>
+        <div><label>البلد / القرية</label><input type="text" id="npTown" maxlength="80"></div>
+      </div>
+      <div style="margin-top:12px"><label>التاريخ المرضي (أمراض مزمنة، عمليات سابقة، حساسية...)</label><textarea id="npHistory"></textarea></div>
+      <div class="row-actions">
+        <button class="primary" id="npSave">حفظ المريض</button>
+        <button id="npCancel">إلغاء</button>
+      </div>
+      <div class="muted" id="npErr" style="color:var(--danger);margin-top:8px"></div>
+    </div>
+
+    <!-- patient detail -->
+    <div id="detail" class="hidden">
+      <div class="card">
+        <h2 id="dName"></h2>
+        <div class="muted" id="dMeta"></div>
+        <div style="margin-top:10px"><label>التاريخ المرضي</label><div id="dHistory" style="white-space:pre-wrap"></div></div>
+        <div class="row-actions">
+          <button class="small" id="dEditBtn">تعديل بيانات المريض</button>
+          <button class="small danger" id="dDelete">حذف المريض</button>
+        </div>
+        <div id="dEdit" class="hidden" style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+          <div class="grid2">
+            <div><label>الاسم</label><input type="text" id="eName" maxlength="120"></div>
+            <div><label>السن</label><input type="number" id="eAge" min="0" max="130"></div>
+            <div><label>رقم التليفون</label><input type="text" id="ePhone" maxlength="30"></div>
+            <div><label>البلد / القرية</label><input type="text" id="eTown" maxlength="80"></div>
+          </div>
+          <div style="margin-top:12px"><label>التاريخ المرضي</label><textarea id="eHist"></textarea></div>
+          <div class="row-actions">
+            <button class="primary" id="eSave">حفظ التعديل</button>
+            <button id="eCancel">إلغاء</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>الأدوية السابقة والحالية</h2>
+        <table id="medTable"><thead><tr><th>الدواء</th><th>الجرعة</th><th>المدة</th><th>ملاحظات</th><th>التاريخ</th><th></th></tr></thead><tbody></tbody></table>
+        <div class="grid2" style="margin-top:12px">
+          <div><label>اسم الدواء</label><input type="text" id="mName" maxlength="120"></div>
+          <div><label>الجرعة</label><input type="text" id="mDose" maxlength="120" placeholder="مثال: 500 مجم مرتين يوميا"></div>
+          <div><label>المدة</label><input type="text" id="mDur" maxlength="60" placeholder="مثال: أسبوع"></div>
+          <div><label>ملاحظات</label><input type="text" id="mNote" maxlength="200"></div>
+        </div>
+        <div class="row-actions"><button class="accent" id="mAdd">إضافة الدواء</button></div>
+      </div>
+
+      <div class="card">
+        <h2>الأشعة والملفات</h2>
+        <div class="flist" id="flist"></div>
+        <div class="row-actions">
+          <button id="fPick">إرفاق ملف / أشعة</button>
+          <input type="file" id="fInput" multiple class="hidden">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>روشتة جديدة</h2>
+        <div class="muted" style="margin-bottom:8px">الأدوية المسجلة فوق بتتضاف للروشتة تلقائيا، وتقدر تعدل أو تزود سطور قبل الطباعة.</div>
+        <table id="rxEdit"><thead><tr><th>الدواء</th><th>الجرعة</th><th>المدة</th><th></th></tr></thead><tbody></tbody></table>
+        <div class="row-actions"><button class="small" id="rxAddRow">+ سطر دواء</button></div>
+        <div style="margin-top:12px"><label>ملاحظات للروشتة (تعليمات، تحاليل مطلوبة، ميعاد المتابعة...)</label><textarea id="rxNotes"></textarea></div>
+        <div class="row-actions"><button class="primary" id="rxShow">معاينة الروشتة</button></div>
+      </div>
+
+      <!-- prescription preview -->
+      <div id="rxWrap" class="hidden" style="margin-top:16px">
+        <div id="rx">
+          <div class="rx-head">
+            <div class="dr">
+              <b>د. محمد سليم خليل</b>
+              <span>جراحة ومناظير الكلى والمسالك البولية والذكورة والعقم</span>
+            </div>
+            <div class="clinic">
+              ديرب نجم — شارع حارة عبد اللطيف<br>
+              بجوار قسم شرطة ديرب نجم وأمام المطافي، الدور الثاني<br>
+              للحجز والاستفسار: 01034104849
+            </div>
+          </div>
+          <div class="rx-pat">
+            <span><b>الاسم:</b> <span id="rxName"></span></span>
+            <span><b>السن:</b> <span id="rxAge"></span></span>
+            <span><b>الكود:</b> <span id="rxCode"></span></span>
+            <span><b>التاريخ:</b> <span id="rxDate"></span></span>
+          </div>
+          <table id="rxTable"><thead><tr><th style="width:40%">الدواء</th><th style="width:35%">الجرعة</th><th style="width:25%">المدة</th></tr></thead><tbody></tbody></table>
+          <div class="rx-notes" id="rxNotesOut"></div>
+          <div class="rx-sign">التوقيع<br><br>....................</div>
+        </div>
+        <div class="row-actions no-print" style="justify-content:center">
+          <button class="primary" onclick="window.print()">طباعة</button>
+          <button id="rxClose">رجوع</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+'use strict';
+var DBNAME='clinicDB', DBVER=2;
+var db=null, memMode=false, memPatients=[], memFiles=[], memSeq=1, memFSeq=1, memUsers=[];
+
+function idbOpen(){
+  return new Promise(function(res,rej){
+    if(!window.indexedDB){return rej(new Error('no idb'))}
+    var r=indexedDB.open(DBNAME,DBVER);
+    r.onupgradeneeded=function(e){
+      var d=e.target.result;
+      if(!d.objectStoreNames.contains('patients')){d.createObjectStore('patients',{keyPath:'id',autoIncrement:true})}
+      if(!d.objectStoreNames.contains('files')){var f=d.createObjectStore('files',{keyPath:'fid',autoIncrement:true});f.createIndex('patientId','patientId',{unique:false})}
+      if(!d.objectStoreNames.contains('users')){d.createObjectStore('users',{keyPath:'name'})}
+    };
+    r.onsuccess=function(){res(r.result)};
+    r.onerror=function(){rej(r.error||new Error('idb error'))};
+  });
+}
+function tx(store,mode){return db.transaction(store,mode).objectStore(store)}
+function pAll(store){return new Promise(function(res,rej){var r=tx(store,'readonly').getAll();r.onsuccess=function(){res(r.result||[])};r.onerror=function(){rej(r.error)}})}
+function pPut(store,val){return new Promise(function(res,rej){var r=tx(store,'readwrite').put(val);r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}})}
+function pDel(store,key){return new Promise(function(res,rej){var r=tx(store,'readwrite').delete(key);r.onsuccess=function(){res()};r.onerror=function(){rej(r.error)}})}
+function pFilesOf(pid){return pAll('files').then(function(all){return all.filter(function(f){return f.patientId===pid})})}
+
+// memory fallback (file:// في متصفحات قليلة بتمنع التخزين)
+var store={
+  allPatients:function(){return db?pAll('patients'):Promise.resolve(memPatients.slice())},
+  putPatient:function(p){
+    if(db){return pPut('patients',p)}
+    if(!p.id){p.id=memSeq++;memPatients.push(p)}else{var i=memPatients.findIndex(function(x){return x.id===p.id});if(i>-1)memPatients[i]=p}
+    return Promise.resolve(p.id);
+  },
+  delPatient:function(id){
+    if(db){return pDel('patients',id)}
+    memPatients=memPatients.filter(function(x){return x.id!==id});return Promise.resolve();
+  },
+  filesOf:function(pid){return db?pFilesOf(pid):Promise.resolve(memFiles.filter(function(f){return f.patientId===pid}))},
+  putFile:function(f){
+    if(db){return pPut('files',f)}
+    if(!f.fid){f.fid=memFSeq++;memFiles.push(f)}
+    return Promise.resolve(f.fid);
+  },
+  delFile:function(fid){
+    if(db){return pDel('files',fid)}
+    memFiles=memFiles.filter(function(x){return x.fid!==fid});return Promise.resolve();
+  },
+  allUsers:function(){return db?pAll('users'):Promise.resolve(memUsers.slice())},
+  putUser:function(u){
+    if(db){return pPut('users',u)}
+    var i=memUsers.findIndex(function(x){return x.name===u.name});if(i>-1)memUsers[i]=u;else memUsers.push(u);
+    return Promise.resolve();
+  },
+  delUser:function(name){
+    if(db){return pDel('users',name)}
+    memUsers=memUsers.filter(function(x){return x.name!==name});return Promise.resolve();
+  }
+};
+
+var cur=null; // current patient object
+var el=function(id){return document.getElementById(id)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmtDate(iso){return iso||''}
+
+function refreshList(){
+  var q=el('q').value.trim();
+  store.allPatients().then(function(all){
+    all.sort(function(a,b){return b.id-a.id});
+    var list=all.filter(function(p){
+      if(!q)return true;
+      if(String(p.id)===q)return true;
+      if((p.phone||'').indexOf(q)>-1)return true;
+      return (p.name||'').indexOf(q)>-1;
+    });
+    var h='';
+    if(!list.length){h='<div class="empty">مفيش مرضى مطابقين.</div>'}
+    list.forEach(function(p){
+      h+='<div class="pitem'+(cur&&cur.id===p.id?' active':'')+'" data-id="'+p.id+'"><b>'+esc(p.name)+'</b><span class="meta">كود #'+p.id+(p.age?(' · '+p.age+' سنة'):'')+(p.phone?(' · '+esc(p.phone)):'')+'</span></div>';
+    });
+    el('plist').innerHTML=h;
+    Array.prototype.forEach.call(document.querySelectorAll('.pitem'),function(n){
+      n.onclick=function(){openPatient(parseInt(n.getAttribute('data-id'),10))};
+    });
+  });
+}
+
+function openPatient(id){
+  store.allPatients().then(function(all){
+    cur=all.find(function(p){return p.id===id})||null;
+    if(!cur)return;
+    el('emptyState').classList.add('hidden');
+    el('newCard').classList.add('hidden');
+    el('detail').classList.remove('hidden');
+    el('rxWrap').classList.add('hidden');
+    el('dName').textContent=cur.name;
+    el('dMeta').textContent='كود #'+cur.id+(cur.age?(' · '+cur.age+' سنة'):'')+(cur.phone?(' · '+cur.phone):'')+(cur.town?(' · '+cur.town):'')+' · سجل يوم '+fmtDate(cur.createdAt);
+    el('dEdit').classList.add('hidden');
+    el('dHistory').textContent=cur.history||'—';
+    renderMeds(); renderFiles(); buildRxRows();
+    refreshList();
+  });
+}
+
+function renderMeds(){
+  var tb=el('medTable').querySelector('tbody');tb.innerHTML='';
+  (cur.meds||[]).forEach(function(m,i){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+esc(m.name)+'</td><td>'+esc(m.dose||'')+'</td><td>'+esc(m.dur||'')+'</td><td>'+esc(m.note||'')+'</td><td class="muted">'+esc(m.date||'')+'</td><td><button class="small danger" data-i="'+i+'">حذف</button></td>';
+    tb.appendChild(tr);
+  });
+  Array.prototype.forEach.call(tb.querySelectorAll('button'),function(b){
+    b.onclick=function(){cur.meds.splice(parseInt(b.getAttribute('data-i'),10),1);saveCur().then(renderMeds)};
+  });
+}
+function saveCur(){return store.putPatient(cur)}
+
+function renderFiles(){
+  store.filesOf(cur.id).then(function(fs){
+    var h='';
+    if(!fs.length){h='<div class="muted">مفيش ملفات مرفوعة لسه.</div>'}
+    fs.forEach(function(f){
+      h+='<div class="fitem"><span class="nm">'+esc(f.name)+'</span><span class="muted">'+esc(f.date||'')+'</span><button class="small" data-view="'+f.fid+'">عرض</button><button class="small danger" data-del="'+f.fid+'">حذف</button></div>';
+    });
+    el('flist').innerHTML=h;
+    Array.prototype.forEach.call(el('flist').querySelectorAll('button[data-view]'),function(b){
+      b.onclick=function(){store.filesOf(cur.id).then(function(all){var f=all.find(function(x){return x.fid==b.getAttribute('data-view')});if(f){var u=URL.createObjectURL(f.blob);window.open(u,'_blank')}})};
+    });
+    Array.prototype.forEach.call(el('flist').querySelectorAll('button[data-del]'),function(b){
+      b.onclick=function(){if(confirm('حذف الملف ده؟')){store.delFile(parseInt(b.getAttribute('data-del'),10)).then(renderFiles)}};
+    });
+  });
+}
+
+function buildRxRows(){
+  var tb=el('rxEdit').querySelector('tbody');tb.innerHTML='';
+  (cur.meds||[]).forEach(function(m){addRxRow(m.name,m.dose,m.dur)});
+  if(!(cur.meds||[]).length){addRxRow('','','')}
+  el('rxNotes').value='';
+}
+function addRxRow(n,d,du){
+  var tb=el('rxEdit').querySelector('tbody');
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td><input type="text" class="rxN" value="'+esc(n||'')+'" maxlength="120"></td><td><input type="text" class="rxD" value="'+esc(d||'')+'" maxlength="120"></td><td><input type="text" class="rxU" value="'+esc(du||'')+'" maxlength="60"></td><td><button class="small danger">x</button></td>';
+  tr.querySelector('button').onclick=function(){tr.remove()};
+  tb.appendChild(tr);
+}
+
+// events
+el('btnNew').onclick=function(){
+  el('emptyState').classList.add('hidden');
+  el('detail').classList.add('hidden');
+  el('newCard').classList.remove('hidden');
+  el('npName').value='';el('npAge').value='';el('npPhone').value='';el('npTown').value='';el('npHistory').value='';el('npErr').textContent='';
+};
+el('npCancel').onclick=function(){el('newCard').classList.add('hidden');if(!cur)el('emptyState').classList.remove('hidden');else el('detail').classList.remove('hidden')};
+el('npSave').onclick=function(){
+  var name=el('npName').value.trim();
+  var age=el('npAge').value?parseInt(el('npAge').value,10):null;
+  var hist=el('npHistory').value.trim();
+  var phone=el('npPhone').value.trim();
+  var town=el('npTown').value.trim();
+  if(name.length<2){el('npErr').textContent='اكتب اسم المريض الأول.';return}
+  var p={name:name,age:age,phone:phone,town:town,history:hist,createdAt:today(),meds:[]};
+  store.putPatient(p).then(function(id){
+    el('newCard').classList.add('hidden');
+    refreshList();openPatient(id);
+  });
+};
+el('q').oninput=refreshList;
+el('dEditBtn').onclick=function(){
+  el('eName').value=cur.name||'';el('eAge').value=cur.age||'';el('ePhone').value=cur.phone||'';el('eTown').value=cur.town||'';el('eHist').value=cur.history||'';
+  el('dEdit').classList.remove('hidden');
+};
+el('eCancel').onclick=function(){el('dEdit').classList.add('hidden')};
+el('eSave').onclick=function(){
+  var nm=el('eName').value.trim();
+  if(nm.length<2){alert('اكتب اسم المريض الأول.');return}
+  cur.name=nm;
+  cur.age=el('eAge').value?parseInt(el('eAge').value,10):null;
+  cur.phone=el('ePhone').value.trim();
+  cur.town=el('eTown').value.trim();
+  cur.history=el('eHist').value.trim();
+  saveCur().then(function(){openPatient(cur.id)});
+};
+el('dDelete').onclick=function(){
+  if(!confirm('حذف المريض "'+cur.name+'" وكل بياناته؟'))return;
+  var id=cur.id;
+  store.filesOf(id).then(function(fs){
+    return Promise.all(fs.map(function(f){return store.delFile(f.fid)}));
+  }).then(function(){return store.delPatient(id)}).then(function(){
+    cur=null;el('detail').classList.add('hidden');el('emptyState').classList.remove('hidden');refreshList();
+  });
+};
+el('mAdd').onclick=function(){
+  var n=el('mName').value.trim();
+  if(n.length<2)return;
+  cur.meds=cur.meds||[];
+  cur.meds.push({name:n,dose:el('mDose').value.trim(),dur:el('mDur').value.trim(),note:el('mNote').value.trim(),date:today()});
+  el('mName').value='';el('mDose').value='';el('mDur').value='';el('mNote').value='';
+  saveCur().then(function(){renderMeds();buildRxRows()});
+};
+el('fPick').onclick=function(){el('fInput').click()};
+el('fInput').onchange=function(){
+  var files=Array.prototype.slice.call(el('fInput').files||[]);
+  var chain=Promise.resolve();
+  files.forEach(function(f){
+    chain=chain.then(function(){return store.putFile({patientId:cur.id,name:f.name,type:f.type,blob:f,date:today()})});
+  });
+  chain.then(function(){el('fInput').value='';renderFiles()});
+};
+el('rxAddRow').onclick=function(){addRxRow('','','')};
+el('rxShow').onclick=function(){
+  var rows=[];
+  Array.prototype.forEach.call(el('rxEdit').querySelectorAll('tbody tr'),function(tr){
+    var n=tr.querySelector('.rxN').value.trim();
+    if(n){rows.push({n:n,d:tr.querySelector('.rxD').value.trim(),u:tr.querySelector('.rxU').value.trim()})}
+  });
+  if(!rows.length){alert('ضيف دواء واحد على الأقل للروشتة.');return}
+  el('rxName').textContent=cur.name;
+  el('rxAge').textContent=cur.age?cur.age+' سنة':'—';
+  el('rxCode').textContent='#'+cur.id;
+  el('rxDate').textContent=today();
+  var tb=el('rxTable').querySelector('tbody');tb.innerHTML='';
+  rows.forEach(function(r){var tr=document.createElement('tr');tr.innerHTML='<td>'+esc(r.n)+'</td><td>'+esc(r.d)+'</td><td>'+esc(r.u)+'</td>';tb.appendChild(tr)});
+  el('rxNotesOut').textContent=el('rxNotes').value.trim();
+  el('rxWrap').classList.remove('hidden');
+  el('rxWrap').scrollIntoView({behavior:'smooth'});
+};
+el('rxClose').onclick=function(){el('rxWrap').classList.add('hidden')};
+
+// backup / restore
+el('btnExport').onclick=function(){
+  Promise.all([store.allPatients(),db?pAll('files'):Promise.resolve(memFiles)]).then(function(res){
+    var files=res[1].map(function(f){return{patientId:f.patientId,name:f.name,type:f.type,date:f.date,skip:'binary'}});
+    var data={app:'clinic',version:1,exportedAt:new Date().toISOString(),patients:res[0],filesMeta:files};
+    var blob=new Blob([JSON.stringify(data)],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='clinic-backup-'+today()+'.json';a.click();
+  });
+};
+el('btnImport').onclick=function(){el('importFile').click()};
+el('importFile').onchange=function(){
+  var f=el('importFile').files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var data=JSON.parse(rd.result);
+      if(!data||!Array.isArray(data.patients))throw 0;
+      var chain=Promise.resolve();
+      data.patients.forEach(function(p){chain=chain.then(function(){return store.putPatient(p)})});
+      chain.then(function(){el('importFile').value='';refreshList();alert('اترجعت '+data.patients.length+' مريض.')});
+    }catch(e){alert('الملف ده مش نسخة احتياطية صح.')}
+  };
+  rd.readAsText(f);
+};
+
+// ===== access control =====
+var session=null, loginSel=null;
+function hexOf(buf){return Array.prototype.map.call(new Uint8Array(buf),function(b){return('0'+b.toString(16)).slice(-2)}).join('')}
+function newSalt(){var b=new Uint8Array(16);crypto.getRandomValues(b);return hexOf(b)}
+function pbkdf2(pass,saltHex){
+  var salt=new Uint8Array(saltHex.match(/../g).map(function(h){return parseInt(h,16)}));
+  return crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveBits']).then(function(k){
+    return crypto.subtle.deriveBits({name:'PBKDF2',salt:salt,iterations:150000,hash:'SHA-256'},k,256);
+  }).then(hexOf);
+}
+function makeUser(name,role,pass){
+  var salt=newSalt();
+  return pbkdf2(pass,salt).then(function(h){return store.putUser({name:name,role:role,salt:salt,hash:h})});
+}
+function checkPass(user,pass){return pbkdf2(pass,user.salt).then(function(h){return h===user.hash})}
+function authShow(id){
+  el('auth').classList.remove('hidden');
+  ['authSetup','authLogin','authForgot'].forEach(function(x){el(x).classList.add('hidden')});
+  el(id).classList.remove('hidden');
+}
+function unlock(user){
+  session={name:user.name,role:user.role};
+  try{sessionStorage.setItem('clinicSess',JSON.stringify(session))}catch(e){}
+  el('auth').classList.add('hidden');
+  el('appHeader').classList.remove('hidden');
+  el('appWrap').classList.remove('hidden');
+  el('btnAccounts').classList.toggle('hidden',user.role!=='doctor');
+  refreshList();
+}
+function lock(){
+  session=null;try{sessionStorage.removeItem('clinicSess')}catch(e){}
+  cur=null;
+  el('detail').classList.add('hidden');el('newCard').classList.add('hidden');el('emptyState').classList.remove('hidden');
+  el('appHeader').classList.add('hidden');
+  el('appWrap').classList.add('hidden');
+  el('accOverlay').classList.add('hidden');
+  el('liPass').value='';el('liErr').textContent='';
+  startAuth();
+}
+function renderLogin(users){
+  var box=el('acctList');box.innerHTML='';loginSel=null;
+  users.forEach(function(u){
+    var b=document.createElement('button');b.className='acctbtn';
+    b.textContent=(u.role==='doctor')?'الدكتور':u.name;
+    b.onclick=function(){loginSel=u.name;Array.prototype.forEach.call(box.children,function(c){c.classList.remove('primary')});b.classList.add('primary');el('liPass').focus()};
+    box.appendChild(b);
+  });
+  if(box.children.length===1){box.children[0].click()}
+}
+function startAuth(){
+  store.allUsers().then(function(users){
+    if(!users.length){el('suPass').value='';el('suPass2').value='';el('suErr').textContent='';authShow('authSetup');return}
+    var s=null;try{s=JSON.parse(sessionStorage.getItem('clinicSess')||'null')}catch(e){}
+    if(s){var u=users.find(function(x){return x.name===s.name});if(u){unlock(u);return}}
+    renderLogin(users);authShow('authLogin');
+  });
+}
+el('suGo').onclick=function(){
+  var p1=el('suPass').value,p2=el('suPass2').value;
+  if(p1.length<4){el('suErr').textContent='الباسورد لازم يكون 4 حروف أو أرقام على الأقل.';return}
+  if(p1!==p2){el('suErr').textContent='الباسوردين مش متطابقين.';return}
+  el('suErr').textContent='';
+  makeUser('الدكتور','doctor',p1).then(function(){
+    el('suPass').value='';el('suPass2').value='';
+    unlock({name:'الدكتور',role:'doctor'});
+  });
+};
+el('liGo').onclick=function(){
+  store.allUsers().then(function(users){
+    var u=users.find(function(x){return x.name===loginSel});
+    if(!u){el('liErr').textContent='اختار الحساب الأول.';return}
+    checkPass(u,el('liPass').value).then(function(ok){
+      if(ok){el('liPass').value='';el('liErr').textContent='';unlock(u)}
+      else{el('liErr').textContent='الباسورد غلط.'}
+    });
+  });
+};
+el('liPass').addEventListener('keydown',function(e){if(e.key==='Enter')el('liGo').click()});
+el('liForgot').onclick=function(){el('wipeConfirm').value='';el('wipeErr').textContent='';authShow('authForgot')};
+el('forgotBack').onclick=function(){startAuth()};
+el('wipeGo').onclick=function(){
+  if(el('wipeConfirm').value.trim()!=='مسح'){el('wipeErr').textContent='اكتب كلمة "مسح" الأول.';return}
+  el('wipeGo').disabled=true;
+  try{sessionStorage.clear()}catch(e){}
+  if(window.indexedDB&&db){db.close();var r=indexedDB.deleteDatabase(DBNAME);r.onsuccess=r.onerror=r.onblocked=function(){location.reload()}}
+  else{location.reload()}
+};
+el('btnLock').onclick=lock;
+
+// accounts panel (doctor only)
+el('btnAccounts').onclick=function(){if(!session||session.role!=='doctor')return;renderAcc();el('accOverlay').classList.remove('hidden')};
+el('accClose').onclick=function(){el('accOverlay').classList.add('hidden')};
+function renderAcc(){
+  store.allUsers().then(function(users){
+    var box=el('accRows');box.innerHTML='';
+    users.forEach(function(u){
+      var row=document.createElement('div');row.className='acctrow';
+      row.innerHTML='<span class="nm"><b>'+esc(u.name)+'</b> <span class="muted">'+(u.role==='doctor'?'دكتور':'مستخدم')+'</span></span>';
+      var bp=document.createElement('button');bp.className='small';bp.textContent='باسورد جديد';
+      bp.onclick=function(){
+        var np=prompt('الباسورد الجديد للحساب "'+u.name+'" (4 حروف أو أرقام على الأقل):');
+        if(np==null)return;
+        if(np.length<4){alert('الباسورد لازم يكون 4 حروف أو أرقام على الأقل.');return}
+        makeUser(u.name,u.role,np).then(function(){alert('اتغير الباسورد.') });
+      };
+      row.appendChild(bp);
+      if(u.role!=='doctor'){
+        var bd=document.createElement('button');bd.className='small danger';bd.textContent='حذف';
+        bd.onclick=function(){if(confirm('حذف حساب "'+u.name+'"؟')){store.delUser(u.name).then(renderAcc)}};
+        row.appendChild(bd);
+      }
+      box.appendChild(row);
+    });
+  });
+}
+el('naAdd').onclick=function(){
+  var nm=el('naName').value.trim(),ps=el('naPass').value;
+  if(nm.length<2){el('naErr').textContent='اكتب الاسم الأول.';return}
+  if(ps.length<4){el('naErr').textContent='الباسورد لازم يكون 4 حروف أو أرقام على الأقل.';return}
+  store.allUsers().then(function(users){
+    if(users.some(function(u){return u.name===nm})){el('naErr').textContent='في حساب بنفس الاسم.';return}
+    makeUser(nm,'secretary',ps).then(function(){el('naName').value='';el('naPass').value='';el('naErr').textContent='';renderAcc()});
+  });
+};
+
+// init
+if(!window.crypto||!crypto.subtle){
+  el('authSetup').innerHTML='<h2>المتصفح مش مدعوم</h2><div class="muted">المتصفح ده مش بيدعم نظام الحماية. افتح الرابط في نسخة محدثة من كروم أو إيدج.</div>';
+  authShow('authSetup');
+}else{
+  idbOpen().then(function(d){db=d;startAuth()}).catch(function(){
+    memMode=true;
+    var w=document.createElement('div');w.className='warn';
+    w.textContent='تنبيه: المتصفح مش بيسمح بالتخزين الدائم هنا، البيانات هتضيع لو الصفحة اتقفلت. على لابتوب العيادة افتح الرابط في كروم أو إيدج.';
+    document.querySelector('.main').prepend(w);
+    startAuth();
+  });
+}
+})();
+</script>
+</body>
+</html>
